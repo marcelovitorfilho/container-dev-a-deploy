@@ -1,1 +1,0 @@
-self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/home/marcelo-vitor/Desenvolvimento/estudos/UnB/Makers/Semana_05/container-dev-a-deploy/frontend/app/layout\":[\"static/media/22a5144ee8d83bca-s.p.woff2\",\"static/media/7d4881bb7e1bf84d-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"
