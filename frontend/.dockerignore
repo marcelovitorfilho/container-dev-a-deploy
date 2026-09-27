@@ -1,4 +1,10 @@
 node_modules
 .next
 .git
-.env*
+.gitignore
+Dockerfile
+Dockerfile.prod
+npm-debug.log
+README.md
+.env
+.env.*
