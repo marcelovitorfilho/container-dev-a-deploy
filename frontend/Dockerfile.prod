@@ -1,27 +1,55 @@
 FROM node:20-alpine AS deps
+
 WORKDIR /app
+
 COPY package*.json ./
+
 RUN npm ci
 
+
 FROM node:20-alpine AS builder
+
 WORKDIR /app
+
+ENV NEXT_TELEMETRY_DISABLED=1
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
-FROM node:20-alpine AS runner
+
+RUN npm run build && \
+    rm -rf .next/standalone/node_modules/@next/swc-* && \
+    find .next/standalone .next/static \
+      \( -name "*.map" -o -name "*.md" -o -name "*.d.ts" \) -type f -delete
+
+
+FROM node:20-alpine AS node-runtime
+
+RUN apk add --no-cache binutils upx && \
+    cp /usr/local/bin/node /tmp/node && \
+    strip --strip-unneeded /tmp/node && \
+    upx --best --lzma /tmp/node
+
+
+FROM alpine:3.23 AS runner
+
 WORKDIR /app
+
+RUN apk add --no-cache libstdc++ && \
+    addgroup -S nextjs && \
+    adduser -S nextjs -G nextjs
+
+COPY --from=node-runtime /tmp/node /usr/local/bin/node
 
 ENV NODE_ENV=production \
     PORT=3000 \
     HOSTNAME=0.0.0.0
 
-RUN addgroup -S nextjs && adduser -S nextjs -G nextjs
-
+COPY --from=builder --chown=nextjs:nextjs /app/public ./public
 COPY --from=builder --chown=nextjs:nextjs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nextjs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nextjs /app/public ./public
 
 USER nextjs
+
 EXPOSE 3000
 
 CMD ["node", "server.js"]
