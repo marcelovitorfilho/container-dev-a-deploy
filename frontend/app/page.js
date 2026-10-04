@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getData } from "../lib/data";
+import { getData, testFirestoreWrite } from "../lib/data";
 
 export default function Home() {
   const [data, setData] = useState(null);
+  const [writeResult, setWriteResult] = useState("");
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -21,9 +22,18 @@ export default function Home() {
       });
   }, []);
 
+async function handleWriteTest() {
+  try {
+    await testFirestoreWrite();
+    setWriteResult("Escrita permitida.");
+  } catch (error) {
+    setWriteResult(`Erro de escrita: ${error.code}`);
+  }
+}
+
   return (
     <main>
-      <h1>Como está o backend?</h1>
+      <h1>Dados do projeto na nuvem</h1>
 
       {loading && <p>Verificando...</p>}
 
@@ -32,6 +42,10 @@ export default function Home() {
           Não consegui falar com o backend agora. Ele ainda não está no ar.
         </p>
       )}
+
+      <button onClick={handleWriteTest}> Testar escrita no Firestore </button>
+
+{writeResult && <p>{writeResult}</p>}
 
       {data && (
         <>
