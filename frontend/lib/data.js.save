@@ -1,0 +1,39 @@
+import { getApps, initializeApp } from "firebase/app";
+import {
+  addDoc,
+  collection,
+  connectFirestoreEmulator,
+  getDocs,
+  getFirestore,
+} from "firebase/firestore";
+
+const app = getApps()[0] ?? initializeApp({
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+});
+
+const db = getFirestore(app);
+
+if (process.env.NEXT_PUBLIC_USE_EMULATOR === "true" && typeof window !== "undefined") {
+  try {
+    connectFirestoreEmulator(db, "127.0.0.1", 8080);
+  } catch {
+  }
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://backend:8000";
+
+export async function getData() {
+  if (process.env.NEXT_PUBLIC_DATA_SOURCE === "firestore") {
+    const snapshot = await getDocs(collection(db, "items"));
+    const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return { status: "ok", items };
+  }
+
+  const response = await fetch(`${API_URL}/api/health/`);
+  if (!response.ok) throw new Error("Não consegui consultar a API");
+  return response.json();
+
+
+export function testFirestoreWrite() {
+  return addDoc(collection(db, "items"), { name: "Teste de escrita" });
+}

@@ -1,0 +1,4 @@
+E1004 15:51:51.793105  134901 dev.go:82] Failed to load initial config from "/home/marcelo-vitor/Desenvolvimento/estudos/UnB/Makers/Semana_05/container-dev-a-deploy/dataconnect": could not find dataconnect.yaml in `/home/marcelo-vitor/Desenvolvimento/estudos/UnB/Makers/Semana_05/container-dev-a-deploy/dataconnect`
+E1004 15:51:51.794445  134901 watch.go:116] watchAllDir unable to walk dir `/home/marcelo-vitor/Desenvolvimento/estudos/UnB/Makers/Semana_05/container-dev-a-deploy/dataconnect`: lstat /home/marcelo-vitor/Desenvolvimento/estudos/UnB/Makers/Semana_05/container-dev-a-deploy/dataconnect: no such file or directory
+I1004 15:51:51.795125  134901 dev.go:103] Listening on address (HTTP + gRPC): 127.0.0.1:9399
+I1004 15:51:51.795221  134901 dev.go:103] Listening on address (HTTP + gRPC): [::1]:9399

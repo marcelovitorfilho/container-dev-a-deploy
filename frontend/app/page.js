@@ -1,30 +1,53 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getData } from "../lib/data";
 
 export default function Home() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://backend:8000/api/health/")
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then(setData)
-      .catch(() => setError(true));
+    getData()
+      .then((data) => {
+        setData(data);
+      })
+      .catch(() => {
+        setError(true);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   return (
     <main>
       <h1>Como está o backend?</h1>
 
-      {error ? (
-        <p>Não consegui falar com o backend agora. Ele ainda não está no ar.</p>
-      ) : !data ? (
-        <p>Verificando...</p>
-      ) : (
+      {loading && <p>Verificando...</p>}
+
+      {error && (
+        <p>
+          Não consegui falar com o backend agora. Ele ainda não está no ar.
+        </p>
+      )}
+
+      {data && (
         <>
           <p>Status: {data.status}</p>
-          <p>{data.message}</p>
+
+          {data.message && <p>{data.message}</p>}
+
+          {data.items && (
+            <ul>
+              {data.items.map((item) => (
+                <li key={item.id}>
+                  {item.name}
+                </li>
+              ))}
+            </ul>
+          )}
         </>
       )}
     </main>

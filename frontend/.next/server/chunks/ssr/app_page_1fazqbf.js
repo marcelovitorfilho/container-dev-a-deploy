@@ -1,3 +1,0 @@
-module.exports=[30100,a=>{"use strict";var b=a.i(87924),c=a.i(72131);a.s(["default",0,function(){let[a,d]=(0,c.useState)(null),[e,f]=(0,c.useState)(!1);return(0,c.useEffect)(()=>{fetch("http://backend:8000/api/health/").then(a=>a.ok?a.json():Promise.reject()).then(d).catch(()=>f(!0))},[]),(0,b.jsxs)("main",{children:[(0,b.jsx)("h1",{children:"Como está o backend?"}),e?(0,b.jsx)("p",{children:"Não consegui falar com o backend agora. Ele ainda não está no ar."}):a?(0,b.jsxs)(b.Fragment,{children:[(0,b.jsxs)("p",{children:["Status: ",a.status]}),(0,b.jsx)("p",{children:a.message})]}):(0,b.jsx)("p",{children:"Verificando..."})]})}])}];
-
-//# sourceMappingURL=app_page_1fazqbf.js.map
