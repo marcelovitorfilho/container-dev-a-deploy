@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "container-dev-a-deploy",
+    "trainee": "container-dev-a-deploy"
+  },
+  "targets": {},
+  "etags": {}
+}
