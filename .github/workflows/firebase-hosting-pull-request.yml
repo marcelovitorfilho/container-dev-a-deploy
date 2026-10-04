@@ -1,0 +1,71 @@
+name: Preview no Firebase Hosting
+
+on:
+  pull_request:
+
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: firebase-preview-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Lint e testes
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Rodar o lint
+        run: npm run lint
+
+      - name: Rodar os testes
+        run: npm test
+
+  publicar:
+    name: Build e preview
+    needs: verificar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependências
+        run: npm ci
+        working-directory: frontend
+
+      - name: Gerar o site estático
+        run: npm run build
+        working-directory: frontend
+        env:
+          STATIC_EXPORT: "true"
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: container-dev-a-deploy
+          NEXT_PUBLIC_DATA_SOURCE: firestore
+          NEXT_PUBLIC_USE_EMULATOR: "false"
+
+      - name: Publicar o preview
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CONTAINER_DEV_A_DEPLOY }}
+          projectId: container-dev-a-deploy
